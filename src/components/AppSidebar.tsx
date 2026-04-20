@@ -19,7 +19,6 @@ const mainItems = [
   { title: "Visão geral", url: "/", icon: LayoutDashboard },
   { title: "Agenda", url: "/agenda", icon: CalendarDays },
   { title: "Pacientes", url: "/pacientes", icon: Users },
-  { title: "Prontuários", url: "/prontuarios", icon: FileText },
 ];
 
 const secondaryItems = [
