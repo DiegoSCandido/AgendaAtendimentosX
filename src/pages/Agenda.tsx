@@ -142,16 +142,40 @@ const Agenda = () => {
                               {format(new Date(slot.date), "HH:mm")} • {slot.duration}min
                             </span>
                           </div>
-                          <Badge
-                            variant="outline"
-                            className={`rounded-full text-[11px] capitalize ${
-                              slot.status === "confirmado"
-                                ? "border-primary/30 bg-primary/10 text-primary"
-                                : "border-accent/40 bg-accent/20 text-accent-foreground"
-                            }`}
-                          >
-                            {slot.status}
-                          </Badge>
+                          {slot.status === "pendente" ? (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button
+                                  className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/20 px-2.5 py-1 text-[11px] capitalize text-accent-foreground transition-smooth hover:bg-accent/30"
+                                  aria-label="Ações da consulta pendente"
+                                >
+                                  {slot.status}
+                                  <ChevronDown className="h-3 w-3" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-44">
+                                <DropdownMenuItem onClick={() => handleConfirm(slot.id, slot.patientName)}>
+                                  <Check className="mr-2 h-4 w-4 text-primary" />
+                                  Confirmar
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleReschedule(slot.id, slot.patientName)}>
+                                  <CalendarClock className="mr-2 h-4 w-4 text-primary" />
+                                  Reagendar
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className={`rounded-full text-[11px] capitalize ${
+                                slot.status === "confirmado"
+                                  ? "border-primary/30 bg-primary/10 text-primary"
+                                  : "border-accent/40 bg-accent/20 text-accent-foreground"
+                              }`}
+                            >
+                              {slot.status}
+                            </Badge>
+                          )}
                         </div>
                       ) : (
                         <div className="h-12 rounded-2xl border border-dashed border-border/50 transition-smooth hover:border-primary/40 hover:bg-muted/30" />
