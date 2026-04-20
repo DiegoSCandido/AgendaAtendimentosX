@@ -39,7 +39,7 @@ const Dashboard = () => {
             </div>
             <div className="flex gap-3">
               <Button asChild variant="outline" className="rounded-full border-border/80 bg-background/60 backdrop-blur">
-                <Link to="/prontuarios">Ver prontuários</Link>
+                <Link to="/pacientes">Ver pacientes</Link>
               </Button>
               <Button className="rounded-full bg-primary text-primary-foreground shadow-elegant hover:bg-primary/90">
                 <Plus className="mr-1 h-4 w-4" /> Novo agendamento
@@ -126,7 +126,7 @@ const Dashboard = () => {
               {recentPatients.map((p) => (
                 <Link
                   key={p.id}
-                  to={`/prontuarios/${p.id}`}
+                  to={`/pacientes/${p.id}`}
                   className="flex items-center gap-3 rounded-2xl p-2.5 transition-smooth hover:bg-muted/40"
                 >
                   <Avatar className="h-10 w-10 border border-border">
