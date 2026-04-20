@@ -3,11 +3,18 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { appointments } from "@/data/mockData";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { appointments as initialAppointments, type Appointment } from "@/data/mockData";
 import { format, isSameDay, addDays, startOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Plus, Clock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Clock, Check, CalendarClock, ChevronDown } from "lucide-react";
+import { toast } from "sonner";
 
 const Agenda = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
