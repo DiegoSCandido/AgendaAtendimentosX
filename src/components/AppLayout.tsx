@@ -4,8 +4,10 @@ import { AppSidebar } from "@/components/AppSidebar";
 import { Bell, Search } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
+import { useUpcomingAppointmentToast } from "@/hooks/useUpcomingAppointmentToast";
 
 export function AppLayout({ children }: { children: ReactNode }) {
+  useUpcomingAppointmentToast();
   return (
     <SidebarProvider>
       <div className="flex min-h-screen w-full bg-gradient-soft">
