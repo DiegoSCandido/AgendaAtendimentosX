@@ -3,14 +3,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { appointments } from "@/data/mockData";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { appointments as initialAppointments, type Appointment } from "@/data/mockData";
 import { format, isSameDay, addDays, startOfDay } from "date-fns";
 import { ptBR } from "date-fns/locale";
 import { useState } from "react";
-import { ChevronLeft, ChevronRight, Plus, Clock } from "lucide-react";
+import { ChevronLeft, ChevronRight, Plus, Clock, Check, CalendarClock, ChevronDown } from "lucide-react";
+import { toast } from "sonner";
 
 const Agenda = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
+  const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
 
   const weekStart = startOfDay(new Date());
   const weekDays = Array.from({ length: 14 }, (_, i) => addDays(weekStart, i));
@@ -20,6 +28,27 @@ const Agenda = () => {
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const hours = Array.from({ length: 11 }, (_, i) => i + 8); // 8h - 18h
+
+  const handleConfirm = (id: string, name: string) => {
+    setAppointments((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, status: "confirmado" } : a)),
+    );
+    toast.success("Consulta confirmada", { description: `${name} foi notificada.` });
+  };
+
+  const handleReschedule = (id: string, name: string) => {
+    setAppointments((prev) =>
+      prev.map((a) => {
+        if (a.id !== id) return a;
+        const next = new Date(a.date);
+        next.setDate(next.getDate() + 1);
+        return { ...a, date: next.toISOString(), status: "pendente" };
+      }),
+    );
+    toast("Reagendamento solicitado", {
+      description: `${name} será contatada para novo horário.`,
+    });
+  };
 
   return (
     <AppLayout>
@@ -113,16 +142,40 @@ const Agenda = () => {
                               {format(new Date(slot.date), "HH:mm")} • {slot.duration}min
                             </span>
                           </div>
-                          <Badge
-                            variant="outline"
-                            className={`rounded-full text-[11px] capitalize ${
-                              slot.status === "confirmado"
-                                ? "border-primary/30 bg-primary/10 text-primary"
-                                : "border-accent/40 bg-accent/20 text-accent-foreground"
-                            }`}
-                          >
-                            {slot.status}
-                          </Badge>
+                          {slot.status === "pendente" ? (
+                            <DropdownMenu>
+                              <DropdownMenuTrigger asChild>
+                                <button
+                                  className="inline-flex items-center gap-1 rounded-full border border-accent/40 bg-accent/20 px-2.5 py-1 text-[11px] capitalize text-accent-foreground transition-smooth hover:bg-accent/30"
+                                  aria-label="Ações da consulta pendente"
+                                >
+                                  {slot.status}
+                                  <ChevronDown className="h-3 w-3" />
+                                </button>
+                              </DropdownMenuTrigger>
+                              <DropdownMenuContent align="end" className="w-44">
+                                <DropdownMenuItem onClick={() => handleConfirm(slot.id, slot.patientName)}>
+                                  <Check className="mr-2 h-4 w-4 text-primary" />
+                                  Confirmar
+                                </DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleReschedule(slot.id, slot.patientName)}>
+                                  <CalendarClock className="mr-2 h-4 w-4 text-primary" />
+                                  Reagendar
+                                </DropdownMenuItem>
+                              </DropdownMenuContent>
+                            </DropdownMenu>
+                          ) : (
+                            <Badge
+                              variant="outline"
+                              className={`rounded-full text-[11px] capitalize ${
+                                slot.status === "confirmado"
+                                  ? "border-primary/30 bg-primary/10 text-primary"
+                                  : "border-accent/40 bg-accent/20 text-accent-foreground"
+                              }`}
+                            >
+                              {slot.status}
+                            </Badge>
+                          )}
                         </div>
                       ) : (
                         <div className="h-12 rounded-2xl border border-dashed border-border/50 transition-smooth hover:border-primary/40 hover:bg-muted/30" />
