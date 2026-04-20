@@ -5,7 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import Index from "./pages/Index.tsx";
 import Agenda from "./pages/Agenda.tsx";
-import Prontuarios from "./pages/Prontuarios.tsx";
+import Pacientes from "./pages/Prontuarios.tsx";
 import ProntuarioDetalhe from "./pages/ProntuarioDetalhe.tsx";
 import NotFound from "./pages/NotFound.tsx";
 
@@ -20,9 +20,8 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/agenda" element={<Agenda />} />
-          <Route path="/pacientes" element={<Prontuarios />} />
-          <Route path="/prontuarios" element={<Prontuarios />} />
-          <Route path="/prontuarios/:id" element={<ProntuarioDetalhe />} />
+          <Route path="/pacientes" element={<Pacientes />} />
+          <Route path="/pacientes/:id" element={<ProntuarioDetalhe />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

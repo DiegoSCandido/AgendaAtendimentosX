@@ -85,7 +85,7 @@ const Prontuarios = () => {
                   variant="ghost"
                   className="mt-5 w-full justify-between rounded-xl bg-secondary/40 text-foreground hover:bg-secondary/70"
                 >
-                  <Link to={`/prontuarios/${p.id}`}>
+                  <Link to={`/pacientes/${p.id}`}>
                     <span className="flex items-center gap-2">
                       <FileText className="h-4 w-4" /> Abrir prontuário
                     </span>

@@ -20,7 +20,7 @@ const ProntuarioDetalhe = () => {
         <div className="mx-auto max-w-2xl py-16 text-center">
           <h1 className="font-display text-3xl">Prontuário não encontrado</h1>
           <Button asChild className="mt-6 rounded-full">
-            <Link to="/prontuarios">Voltar</Link>
+            <Link to="/pacientes">Voltar</Link>
           </Button>
         </div>
       </AppLayout>
@@ -33,7 +33,7 @@ const ProntuarioDetalhe = () => {
     <AppLayout>
       <div className="mx-auto max-w-6xl space-y-8">
         <Button asChild variant="ghost" className="rounded-full text-muted-foreground hover:text-foreground -ml-3">
-          <Link to="/prontuarios">
+          <Link to="/pacientes">
             <ArrowLeft className="mr-2 h-4 w-4" /> Voltar para pacientes
           </Link>
         </Button>
