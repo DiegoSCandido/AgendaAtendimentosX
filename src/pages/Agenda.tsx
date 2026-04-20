@@ -18,6 +18,7 @@ import { toast } from "sonner";
 
 const Agenda = () => {
   const [selectedDate, setSelectedDate] = useState<Date>(startOfDay(new Date()));
+  const [appointments, setAppointments] = useState<Appointment[]>(initialAppointments);
 
   const weekStart = startOfDay(new Date());
   const weekDays = Array.from({ length: 14 }, (_, i) => addDays(weekStart, i));
@@ -27,6 +28,27 @@ const Agenda = () => {
     .sort((a, b) => new Date(a.date).getTime() - new Date(b.date).getTime());
 
   const hours = Array.from({ length: 11 }, (_, i) => i + 8); // 8h - 18h
+
+  const handleConfirm = (id: string, name: string) => {
+    setAppointments((prev) =>
+      prev.map((a) => (a.id === id ? { ...a, status: "confirmado" } : a)),
+    );
+    toast.success("Consulta confirmada", { description: `${name} foi notificada.` });
+  };
+
+  const handleReschedule = (id: string, name: string) => {
+    setAppointments((prev) =>
+      prev.map((a) => {
+        if (a.id !== id) return a;
+        const next = new Date(a.date);
+        next.setDate(next.getDate() + 1);
+        return { ...a, date: next.toISOString(), status: "pendente" };
+      }),
+    );
+    toast("Reagendamento solicitado", {
+      description: `${name} será contatada para novo horário.`,
+    });
+  };
 
   return (
     <AppLayout>
