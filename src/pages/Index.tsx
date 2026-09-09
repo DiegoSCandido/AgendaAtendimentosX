@@ -1,152 +1,339 @@
+import { useMemo, useState } from "react";
+import { Link } from "react-router-dom";
+import {
+  addDays,
+  differenceInCalendarDays,
+  format,
+  isSameDay,
+  isThisMonth,
+  isToday,
+  startOfDay,
+} from "date-fns";
+import { ptBR } from "date-fns/locale";
+import {
+  ArrowUpRight,
+  CalendarCheck,
+  Clock,
+  Plus,
+  Sparkles,
+  TrendingUp,
+  Users,
+  CalendarDays,
+} from "lucide-react";
+import {
+  Bar,
+  BarChart,
+  CartesianGrid,
+  Cell,
+  ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
+} from "recharts";
 import { AppLayout } from "@/components/AppLayout";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { appointments, patients, stats } from "@/data/mockData";
-import { Users, CalendarCheck, Sparkles, TrendingUp, Clock, ArrowUpRight, Plus } from "lucide-react";
-import { format, isToday } from "date-fns";
-import { ptBR } from "date-fns/locale";
-import { Link } from "react-router-dom";
-
-const statCards = [
-  { label: "Pacientes ativos", value: stats.pacientesAtivos, change: "+12%", icon: Users, accent: "from-primary to-primary-glow" },
-  { label: "Agendamentos hoje", value: stats.agendamentosHoje, change: "5 confirmados", icon: CalendarCheck, accent: "from-accent to-secondary" },
-  { label: "Procedimentos no mês", value: stats.proceduresMes, change: "+8%", icon: Sparkles, accent: "from-primary-glow to-accent" },
-  { label: "Receita do mês", value: `R$ ${stats.receitaMes.toLocaleString("pt-BR")}`, change: "+18%", icon: TrendingUp, accent: "from-primary to-accent" },
-];
+import { StatusBadge } from "@/components/StatusBadge";
+import { EmptyState } from "@/components/EmptyState";
+import { AgendamentoDialog } from "@/components/AgendamentoDialog";
+import { useClinica } from "@/store/clinica";
+import { iniciais, moeda } from "@/lib/clinica";
 
 const Dashboard = () => {
-  const todayAppointments = appointments.filter((a) => isToday(new Date(a.date)));
-  const recentPatients = patients.slice(0, 4);
+  const { agendamentos, pacientes, configuracoes, paciente, procedimento } = useClinica();
+  const [novo, setNovo] = useState(false);
+
+  const doDia = useMemo(
+    () =>
+      agendamentos
+        .filter((a) => isToday(new Date(a.inicio)) && a.status !== "cancelado")
+        .sort((a, b) => +new Date(a.inicio) - +new Date(b.inicio)),
+    [agendamentos],
+  );
+
+  const metricas = useMemo(() => {
+    const doMes = agendamentos.filter((a) => isThisMonth(new Date(a.inicio)));
+    const concluidos = doMes.filter((a) => a.status === "concluido");
+    const receita = concluidos.reduce((s, a) => s + a.valor, 0);
+    const previsto = doMes
+      .filter((a) => a.status === "agendado" || a.status === "confirmado")
+      .reduce((s, a) => s + a.valor, 0);
+    const ativos = new Set(
+      agendamentos
+        .filter((a) => differenceInCalendarDays(new Date(), new Date(a.inicio)) <= 120)
+        .map((a) => a.pacienteId),
+    );
+    const faltas = doMes.filter((a) => a.status === "faltou").length;
+    const taxaFalta = doMes.length ? Math.round((faltas / doMes.length) * 100) : 0;
+    const ticket = concluidos.length ? Math.round(receita / concluidos.length) : 0;
+
+    return { concluidos: concluidos.length, receita, previsto, ativos: ativos.size, taxaFalta, ticket };
+  }, [agendamentos]);
+
+  /* Atendimentos por dia — série única, uma cor só; o dia atual ganha destaque. */
+  const serie = useMemo(() => {
+    const base = startOfDay(new Date());
+    return Array.from({ length: 14 }, (_, i) => {
+      const dia = addDays(base, i - 7);
+      const doDiaX = agendamentos.filter(
+        (a) => isSameDay(new Date(a.inicio), dia) && a.status !== "cancelado",
+      );
+      return {
+        dia: format(dia, "dd/MM"),
+        rotulo: format(dia, "EEEE, dd 'de' MMMM", { locale: ptBR }),
+        atendimentos: doDiaX.length,
+        hoje: isSameDay(dia, base),
+      };
+    });
+  }, [agendamentos]);
+
+  const cartoes = [
+    {
+      rotulo: "Pacientes ativos",
+      valor: metricas.ativos,
+      apoio: `${pacientes.length} prontuários no total`,
+      icon: Users,
+    },
+    {
+      rotulo: "Atendimentos hoje",
+      valor: doDia.length,
+      apoio: `${doDia.filter((a) => a.status === "confirmado").length} confirmados`,
+      icon: CalendarCheck,
+    },
+    {
+      rotulo: "Concluídos no mês",
+      valor: metricas.concluidos,
+      apoio: `ticket médio ${moeda(metricas.ticket)}`,
+      icon: Sparkles,
+    },
+    {
+      rotulo: "Receita realizada",
+      valor: moeda(metricas.receita),
+      apoio: `${moeda(metricas.previsto)} ainda previstos`,
+      icon: TrendingUp,
+    },
+  ];
+
+  const saudacao = (() => {
+    const h = new Date().getHours();
+    if (h < 12) return "Bom dia";
+    if (h < 18) return "Boa tarde";
+    return "Boa noite";
+  })();
+
+  const primeiroNome = configuracoes.profissional.split(" ")[0];
 
   return (
     <AppLayout>
-      <div className="mx-auto max-w-7xl space-y-8">
-        {/* Hero */}
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-hero p-8 md:p-12 shadow-soft">
+      <div className="mx-auto max-w-7xl space-y-6">
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-hero p-8 shadow-soft md:p-12">
           <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
             <div className="space-y-3">
-              <p className="text-xs uppercase tracking-[0.25em] text-muted-foreground">
+              <p className="rotulo">
                 {format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR })}
               </p>
-              <h1 className="font-display text-4xl font-medium leading-tight text-foreground md:text-5xl">
-                Bom dia, <span className="italic text-primary">Helena</span>
+              <h1 className="font-display text-4xl font-medium leading-tight md:text-5xl">
+                {saudacao}, <span className="italic text-primary">{primeiroNome}</span>
               </h1>
               <p className="max-w-md text-muted-foreground">
-                Você tem {todayAppointments.length} atendimentos hoje. Que seja um dia leve e produtivo.
+                {doDia.length === 0
+                  ? "Nenhum atendimento marcado para hoje. Bom momento para organizar a semana."
+                  : `Você tem ${doDia.length} ${doDia.length === 1 ? "atendimento" : "atendimentos"} hoje, começando às ${format(new Date(doDia[0].inicio), "HH:mm")}.`}
               </p>
             </div>
-            <div className="flex gap-3">
-              <Button asChild variant="outline" className="rounded-full border-border/80 bg-background/60 backdrop-blur">
+            <div className="flex flex-wrap gap-3">
+              <Button asChild variant="outline" className="rounded-full bg-background/60 backdrop-blur">
                 <Link to="/pacientes">Ver pacientes</Link>
               </Button>
-              <Button className="rounded-full bg-primary text-primary-foreground shadow-elegant hover:bg-primary/90">
+              <Button onClick={() => setNovo(true)} className="rounded-full shadow-elegant">
                 <Plus className="mr-1 h-4 w-4" /> Novo agendamento
               </Button>
             </div>
           </div>
         </section>
 
-        {/* Stats */}
         <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
-          {statCards.map((s) => (
-            <Card key={s.label} className="group relative overflow-hidden border-border/60 bg-card/80 shadow-soft transition-smooth hover:-translate-y-1 hover:shadow-elegant">
-              <CardContent className="p-6">
-                <div className="flex items-start justify-between">
-                  <div className={`flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-br ${s.accent} text-primary-foreground shadow-glow`}>
-                    <s.icon className="h-5 w-5" />
-                  </div>
-                  <Badge variant="secondary" className="rounded-full bg-secondary/60 text-[11px] font-medium text-secondary-foreground">
-                    {s.change}
-                  </Badge>
+          {cartoes.map((c) => (
+            <Card key={c.rotulo} className="border-border/60 bg-card/80 shadow-soft">
+              <CardContent className="p-5">
+                <div className="flex items-center gap-2 text-muted-foreground">
+                  <c.icon className="h-4 w-4" aria-hidden />
+                  <span className="text-sm">{c.rotulo}</span>
                 </div>
-                <div className="mt-6">
-                  <p className="text-sm text-muted-foreground">{s.label}</p>
-                  <p className="mt-1 font-display text-3xl font-semibold text-foreground">{s.value}</p>
-                </div>
+                <p className="mt-3 font-display text-3xl font-semibold tabular-nums">{c.valor}</p>
+                <p className="mt-1 text-xs text-muted-foreground">{c.apoio}</p>
               </CardContent>
             </Card>
           ))}
         </section>
 
-        {/* Today + Recent */}
         <section className="grid gap-6 lg:grid-cols-3">
-          <Card className="lg:col-span-2 border-border/60 bg-card/80 shadow-soft">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+          <Card className="border-border/60 bg-card/80 shadow-soft lg:col-span-2">
+            <CardHeader className="flex flex-row items-start justify-between space-y-0">
               <div>
                 <CardTitle className="font-display text-2xl font-medium">Agenda de hoje</CardTitle>
-                <p className="mt-1 text-sm text-muted-foreground">{todayAppointments.length} atendimentos programados</p>
+                <p className="mt-1 text-sm text-muted-foreground">
+                  {doDia.length} programados · {configuracoes.horaAbertura}h às{" "}
+                  {configuracoes.horaFechamento}h
+                </p>
               </div>
-              <Button asChild variant="ghost" size="sm" className="rounded-full text-muted-foreground hover:text-foreground">
-                <Link to="/agenda">Ver tudo <ArrowUpRight className="ml-1 h-4 w-4" /></Link>
+              <Button asChild variant="ghost" size="sm" className="rounded-full">
+                <Link to="/agenda">
+                  Ver agenda <ArrowUpRight className="ml-1 h-4 w-4" />
+                </Link>
               </Button>
             </CardHeader>
-            <CardContent className="space-y-2">
-              {todayAppointments.map((appt) => (
-                <div key={appt.id} className="group flex items-center gap-4 rounded-2xl border border-transparent p-3 transition-smooth hover:border-border hover:bg-muted/40">
-                  <div className="flex w-16 flex-col items-center rounded-xl bg-secondary/50 px-2 py-2">
-                    <Clock className="h-3.5 w-3.5 text-primary" />
-                    <span className="mt-1 font-display text-base font-semibold text-foreground">
-                      {format(new Date(appt.date), "HH:mm")}
-                    </span>
-                  </div>
-                  <Avatar className="h-11 w-11 border border-border">
-                    <AvatarFallback className="bg-gradient-spa text-sm font-medium text-primary-foreground">
-                      {appt.patientInitials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="truncate font-medium text-foreground">{appt.patientName}</p>
-                    <p className="truncate text-sm text-muted-foreground">{appt.procedure} • {appt.duration}min</p>
-                  </div>
-                  <Badge
-                    variant="outline"
-                    className={`rounded-full text-[11px] capitalize ${
-                      appt.status === "confirmado"
-                        ? "border-primary/30 bg-primary/10 text-primary"
-                        : "border-accent/40 bg-accent/20 text-accent-foreground"
-                    }`}
-                  >
-                    {appt.status}
-                  </Badge>
-                </div>
-              ))}
+            <CardContent className="space-y-1.5">
+              {doDia.length === 0 ? (
+                <EmptyState
+                  icon={CalendarDays}
+                  titulo="Dia livre"
+                  descricao="Não há atendimentos marcados para hoje."
+                  acao={
+                    <Button onClick={() => setNovo(true)} className="rounded-full">
+                      <Plus className="mr-1 h-4 w-4" /> Agendar
+                    </Button>
+                  }
+                />
+              ) : (
+                doDia.map((a) => {
+                  const p = paciente(a.pacienteId);
+                  return (
+                    <Link
+                      key={a.id}
+                      to={`/pacientes/${a.pacienteId}`}
+                      className="flex items-center gap-4 rounded-2xl border border-transparent p-3 transition-smooth hover:border-border hover:bg-muted/50"
+                    >
+                      <div className="flex w-16 shrink-0 flex-col items-center rounded-xl bg-secondary/60 px-2 py-2">
+                        <Clock className="h-3.5 w-3.5 text-primary" aria-hidden />
+                        <span className="mt-1 font-display text-base font-semibold tabular-nums">
+                          {format(new Date(a.inicio), "HH:mm")}
+                        </span>
+                      </div>
+                      <Avatar className="h-11 w-11 shrink-0 border border-border">
+                        <AvatarFallback className="bg-gradient-spa text-sm text-primary-foreground">
+                          {iniciais(p?.nome ?? "?")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate font-medium">{p?.nome}</p>
+                        <p className="truncate text-sm text-muted-foreground">
+                          {procedimento(a.procedimentoId)?.nome} • {a.duracao}min
+                        </p>
+                      </div>
+                      <StatusBadge status={a.status} />
+                    </Link>
+                  );
+                })
+              )}
             </CardContent>
           </Card>
 
           <Card className="border-border/60 bg-card/80 shadow-soft">
-            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-              <div>
-                <CardTitle className="font-display text-2xl font-medium">Pacientes recentes</CardTitle>
-                <p className="mt-1 text-sm text-muted-foreground">Últimas visitas</p>
-              </div>
+            <CardHeader>
+              <CardTitle className="font-display text-2xl font-medium">Últimas visitas</CardTitle>
+              <p className="text-sm text-muted-foreground">Quem passou por aqui recentemente</p>
             </CardHeader>
             <CardContent className="space-y-1">
-              {recentPatients.map((p) => (
-                <Link
-                  key={p.id}
-                  to={`/pacientes/${p.id}`}
-                  className="flex items-center gap-3 rounded-2xl p-2.5 transition-smooth hover:bg-muted/40"
-                >
-                  <Avatar className="h-10 w-10 border border-border">
-                    <AvatarFallback className="bg-secondary text-xs font-medium text-secondary-foreground">
-                      {p.initials}
-                    </AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1 min-w-0">
-                    <p className="truncate text-sm font-medium text-foreground">{p.name}</p>
-                    <p className="truncate text-xs text-muted-foreground">
-                      {p.totalSessions} sessões • {format(new Date(p.lastVisit), "dd MMM", { locale: ptBR })}
-                    </p>
-                  </div>
-                  <ArrowUpRight className="h-4 w-4 text-muted-foreground" />
-                </Link>
-              ))}
+              {[...agendamentos]
+                .filter((a) => a.status === "concluido")
+                .sort((a, b) => +new Date(b.inicio) - +new Date(a.inicio))
+                .filter(
+                  (a, i, arr) => arr.findIndex((x) => x.pacienteId === a.pacienteId) === i,
+                )
+                .slice(0, 5)
+                .map((a) => {
+                  const p = paciente(a.pacienteId);
+                  return (
+                    <Link
+                      key={a.id}
+                      to={`/pacientes/${a.pacienteId}`}
+                      className="flex items-center gap-3 rounded-2xl p-2.5 transition-smooth hover:bg-muted/50"
+                    >
+                      <Avatar className="h-10 w-10 shrink-0 border border-border">
+                        <AvatarFallback className="bg-secondary text-xs text-secondary-foreground">
+                          {iniciais(p?.nome ?? "?")}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div className="min-w-0 flex-1">
+                        <p className="truncate text-sm font-medium">{p?.nome}</p>
+                        <p className="truncate text-xs text-muted-foreground">
+                          {procedimento(a.procedimentoId)?.nome} ·{" "}
+                          {format(new Date(a.inicio), "dd MMM", { locale: ptBR })}
+                        </p>
+                      </div>
+                      <ArrowUpRight className="h-4 w-4 shrink-0 text-muted-foreground" aria-hidden />
+                    </Link>
+                  );
+                })}
             </CardContent>
           </Card>
         </section>
+
+        <Card className="border-border/60 bg-card/80 shadow-soft">
+          <CardHeader>
+            <CardTitle className="font-display text-2xl font-medium">
+              Atendimentos por dia
+            </CardTitle>
+            <p className="text-sm text-muted-foreground">
+              Últimos 7 dias e a semana que vem — a barra destacada é hoje.
+            </p>
+          </CardHeader>
+          <CardContent>
+            <div className="h-56 w-full">
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={serie} margin={{ top: 4, right: 8, bottom: 0, left: -20 }}>
+                  <CartesianGrid
+                    vertical={false}
+                    stroke="hsl(var(--border))"
+                    strokeDasharray="3 3"
+                  />
+                  <XAxis
+                    dataKey="dia"
+                    tickLine={false}
+                    axisLine={false}
+                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+                  />
+                  <YAxis
+                    allowDecimals={false}
+                    tickLine={false}
+                    axisLine={false}
+                    width={32}
+                    tick={{ fill: "hsl(var(--muted-foreground))", fontSize: 11 }}
+                  />
+                  <Tooltip
+                    cursor={{ fill: "hsl(var(--muted) / 0.6)" }}
+                    contentStyle={{
+                      background: "hsl(var(--popover))",
+                      border: "1px solid hsl(var(--border))",
+                      borderRadius: 12,
+                      color: "hsl(var(--popover-foreground))",
+                      fontSize: 12,
+                      boxShadow: "var(--shadow-soft)",
+                    }}
+                    labelFormatter={(_, p) => p?.[0]?.payload?.rotulo ?? ""}
+                    formatter={(v: number) => [
+                      `${v} ${v === 1 ? "atendimento" : "atendimentos"}`,
+                      "",
+                    ]}
+                  />
+                  <Bar dataKey="atendimentos" radius={[4, 4, 0, 0]} maxBarSize={22}>
+                    {serie.map((d) => (
+                      <Cell
+                        key={d.dia}
+                        fill={d.hoje ? "hsl(var(--primary))" : "hsl(var(--primary) / 0.32)"}
+                      />
+                    ))}
+                  </Bar>
+                </BarChart>
+              </ResponsiveContainer>
+            </div>
+          </CardContent>
+        </Card>
       </div>
+
+      <AgendamentoDialog aberto={novo} onOpenChange={setNovo} />
     </AppLayout>
   );
 };

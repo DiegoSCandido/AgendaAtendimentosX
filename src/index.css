@@ -1,95 +1,123 @@
-@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=Karla:wght@300;400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Karla:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-/* Spa Sereno — Sage & Cream design system */
+/* Aurora Estética — sistema de design sage & cream */
 
 @layer base {
   :root {
-    /* Surfaces */
-    --background: 40 33% 96%;          /* warm cream */
-    --foreground: 140 18% 18%;         /* deep forest */
+    /* Superfícies */
+    --background: 42 30% 97%;
+    --foreground: 150 16% 15%;
 
-    --card: 40 40% 98%;
-    --card-foreground: 140 18% 18%;
+    --card: 40 40% 99%;
+    --card-foreground: 150 16% 15%;
 
-    --popover: 40 40% 98%;
-    --popover-foreground: 140 18% 18%;
+    --popover: 40 44% 99%;
+    --popover-foreground: 150 16% 15%;
 
-    /* Brand */
-    --primary: 110 14% 38%;            /* sage deep */
-    --primary-foreground: 40 40% 98%;
-    --primary-glow: 105 22% 58%;
+    /* Marca */
+    --primary: 152 22% 30%;
+    --primary-foreground: 42 44% 98%;
+    --primary-glow: 148 24% 52%;
 
-    --secondary: 95 18% 80%;           /* light sage */
-    --secondary-foreground: 140 22% 22%;
+    --secondary: 96 20% 88%;
+    --secondary-foreground: 150 24% 20%;
 
-    --muted: 60 18% 92%;
-    --muted-foreground: 140 8% 42%;
+    --muted: 45 20% 93%;
+    --muted-foreground: 150 8% 40%;
 
-    --accent: 95 22% 70%;              /* sage accent */
-    --accent-foreground: 140 25% 16%;
+    --accent: 30 42% 88%;
+    --accent-foreground: 25 35% 24%;
 
-    --destructive: 8 55% 52%;
-    --destructive-foreground: 40 40% 98%;
+    /* Estado — passos escolhidos por contraste e separação em daltonismo.
+       Sempre acompanhados de ícone + rótulo, nunca cor sozinha. */
+    --success: 152 70% 28%;
+    --warning: 38 92% 35%;
+    --info: 197 88% 31%;
+    --destructive: 6 61% 47%;
+    --destructive-foreground: 42 44% 98%;
 
-    --border: 90 15% 86%;
-    --input: 90 15% 88%;
-    --ring: 110 14% 38%;
+    --border: 90 14% 87%;
+    --input: 90 14% 84%;
+    --ring: 152 22% 30%;
 
-    --radius: 1rem;
+    --radius: 0.875rem;
 
-    /* Gradients & shadows */
-    --gradient-spa: linear-gradient(135deg, hsl(95 22% 78%) 0%, hsl(110 18% 62%) 100%);
-    --gradient-soft: linear-gradient(180deg, hsl(40 33% 97%) 0%, hsl(95 18% 92%) 100%);
-    --gradient-hero: radial-gradient(ellipse at top right, hsl(105 22% 70% / 0.4), transparent 60%),
-                     radial-gradient(ellipse at bottom left, hsl(40 50% 90% / 0.6), transparent 60%);
+    --gradient-spa: linear-gradient(135deg, hsl(148 24% 52%) 0%, hsl(152 22% 30%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(42 30% 97%) 0%, hsl(96 16% 94%) 100%);
+    --gradient-hero: radial-gradient(ellipse at 15% 0%, hsl(148 30% 70% / 0.28), transparent 55%),
+                     radial-gradient(ellipse at 90% 100%, hsl(30 50% 82% / 0.45), transparent 55%);
 
-    --shadow-soft: 0 4px 24px -8px hsl(110 20% 30% / 0.12);
-    --shadow-elegant: 0 20px 60px -20px hsl(110 20% 30% / 0.18);
-    --shadow-glow: 0 0 40px hsl(105 22% 58% / 0.25);
+    --shadow-soft: 0 1px 2px hsl(150 20% 20% / 0.04), 0 6px 20px -12px hsl(150 20% 20% / 0.16);
+    --shadow-elegant: 0 2px 4px hsl(150 20% 20% / 0.05), 0 24px 48px -24px hsl(150 20% 20% / 0.24);
+    --shadow-glow: 0 6px 20px -8px hsl(152 30% 32% / 0.4);
 
     --transition-smooth: cubic-bezier(0.22, 1, 0.36, 1);
 
-    /* Sidebar */
-    --sidebar-background: 95 14% 94%;
-    --sidebar-foreground: 140 18% 22%;
-    --sidebar-primary: 110 14% 38%;
-    --sidebar-primary-foreground: 40 40% 98%;
-    --sidebar-accent: 95 22% 86%;
-    --sidebar-accent-foreground: 140 22% 18%;
-    --sidebar-border: 90 15% 84%;
-    --sidebar-ring: 110 14% 38%;
+    --sidebar-background: 96 16% 95%;
+    --sidebar-foreground: 150 18% 20%;
+    --sidebar-primary: 152 22% 30%;
+    --sidebar-primary-foreground: 42 44% 98%;
+    --sidebar-accent: 96 24% 88%;
+    --sidebar-accent-foreground: 152 26% 18%;
+    --sidebar-border: 90 14% 86%;
+    --sidebar-ring: 152 22% 30%;
   }
 
   .dark {
-    --background: 140 20% 8%;
-    --foreground: 40 30% 94%;
-    --card: 140 18% 11%;
-    --card-foreground: 40 30% 94%;
-    --popover: 140 18% 11%;
-    --popover-foreground: 40 30% 94%;
-    --primary: 95 22% 70%;
-    --primary-foreground: 140 25% 12%;
-    --secondary: 140 14% 18%;
-    --secondary-foreground: 40 30% 94%;
-    --muted: 140 14% 16%;
-    --muted-foreground: 95 10% 65%;
-    --accent: 110 14% 38%;
-    --accent-foreground: 40 30% 94%;
-    --border: 140 14% 18%;
-    --input: 140 14% 18%;
-    --ring: 95 22% 70%;
-    --sidebar-background: 140 20% 10%;
-    --sidebar-foreground: 40 30% 92%;
-    --sidebar-primary: 95 22% 70%;
-    --sidebar-primary-foreground: 140 25% 12%;
-    --sidebar-accent: 140 14% 16%;
-    --sidebar-accent-foreground: 40 30% 92%;
-    --sidebar-border: 140 14% 18%;
-    --sidebar-ring: 95 22% 70%;
+    --background: 155 18% 8%;
+    --foreground: 42 26% 93%;
+
+    --card: 155 16% 12%;
+    --card-foreground: 42 26% 93%;
+
+    --popover: 155 18% 11%;
+    --popover-foreground: 42 26% 93%;
+
+    --primary: 148 32% 62%;
+    --primary-foreground: 155 28% 10%;
+    --primary-glow: 148 34% 70%;
+
+    --secondary: 155 12% 20%;
+    --secondary-foreground: 42 26% 93%;
+
+    --muted: 155 12% 17%;
+    --muted-foreground: 100 8% 65%;
+
+    --accent: 28 20% 24%;
+    --accent-foreground: 36 40% 88%;
+
+    /* Passos próprios do modo escuro, não uma inversão automática do claro. */
+    --success: 145 44% 48%;
+    --warning: 40 62% 55%;
+    --info: 197 55% 55%;
+    --destructive: 6 66% 62%;
+    --destructive-foreground: 155 28% 10%;
+
+    --border: 155 10% 21%;
+    --input: 155 10% 24%;
+    --ring: 148 32% 62%;
+
+    --gradient-spa: linear-gradient(135deg, hsl(148 30% 46%) 0%, hsl(155 26% 26%) 100%);
+    --gradient-soft: linear-gradient(180deg, hsl(155 18% 8%) 0%, hsl(155 14% 11%) 100%);
+    --gradient-hero: radial-gradient(ellipse at 15% 0%, hsl(148 30% 40% / 0.3), transparent 55%),
+                     radial-gradient(ellipse at 90% 100%, hsl(30 30% 40% / 0.25), transparent 55%);
+
+    --shadow-soft: 0 1px 2px hsl(0 0% 0% / 0.3), 0 6px 20px -12px hsl(0 0% 0% / 0.5);
+    --shadow-elegant: 0 2px 4px hsl(0 0% 0% / 0.3), 0 24px 48px -24px hsl(0 0% 0% / 0.6);
+    --shadow-glow: 0 6px 20px -8px hsl(148 30% 46% / 0.45);
+
+    --sidebar-background: 155 18% 10%;
+    --sidebar-foreground: 42 24% 90%;
+    --sidebar-primary: 148 32% 62%;
+    --sidebar-primary-foreground: 155 28% 10%;
+    --sidebar-accent: 155 12% 18%;
+    --sidebar-accent-foreground: 42 24% 92%;
+    --sidebar-border: 155 10% 20%;
+    --sidebar-ring: 148 32% 62%;
   }
 }
 
@@ -106,6 +134,25 @@
   h1, h2, h3, h4 {
     @apply font-display tracking-tight;
   }
+
+  /* Barras de rolagem discretas, coerentes com o tema */
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb {
+    background: hsl(var(--border));
+    border: 3px solid transparent;
+    background-clip: content-box;
+    border-radius: 999px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--muted-foreground) / 0.5);
+    background-clip: content-box;
+  }
+
+  :focus-visible {
+    outline: 2px solid hsl(var(--ring));
+    outline-offset: 2px;
+  }
 }
 
 @layer utilities {
@@ -115,5 +162,14 @@
   .shadow-soft { box-shadow: var(--shadow-soft); }
   .shadow-elegant { box-shadow: var(--shadow-elegant); }
   .shadow-glow { box-shadow: var(--shadow-glow); }
-  .transition-smooth { transition: all 0.4s var(--transition-smooth); }
+  .transition-smooth { transition: all 0.28s var(--transition-smooth); }
+
+  .rotulo {
+    @apply text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground;
+  }
+}
+
+@media print {
+  .nao-imprimir { display: none !important; }
+  body { background: #fff; }
 }
