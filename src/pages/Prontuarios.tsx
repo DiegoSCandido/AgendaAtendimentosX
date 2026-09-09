@@ -69,11 +69,11 @@ const Prontuarios = () => {
 
   return (
     <AppLayout>
-      <div className="mx-auto max-w-7xl space-y-6">
-        <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="mx-auto max-w-7xl space-y-5 md:space-y-6">
+        <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="rotulo">Prontuários</p>
-            <h1 className="mt-2 font-display text-4xl font-medium md:text-5xl">
+            <h1 className="mt-1.5 font-display text-3xl font-medium sm:text-4xl lg:text-5xl">
               Seus <span className="italic text-primary">pacientes</span>
             </h1>
             <p className="mt-2 text-muted-foreground">
@@ -131,7 +131,7 @@ const Prontuarios = () => {
             {filtrados.map((p) => (
               <Card
                 key={p.id}
-                className="border-border/60 bg-card/80 shadow-soft transition-smooth hover:-translate-y-0.5 hover:shadow-elegant"
+                className="min-w-0 border-border/60 bg-card/80 shadow-soft transition-smooth hover:-translate-y-0.5 hover:shadow-elegant"
               >
                 <CardContent className="flex h-full flex-col p-6">
                   <div className="flex items-start gap-4">

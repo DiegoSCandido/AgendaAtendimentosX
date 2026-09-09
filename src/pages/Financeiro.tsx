@@ -95,11 +95,11 @@ const Financeiro = () => {
 
   return (
     <AppLayout>
-      <div className="mx-auto max-w-7xl space-y-6">
-        <header className="flex flex-col gap-4 md:flex-row md:items-end md:justify-between">
+      <div className="mx-auto max-w-7xl space-y-5 md:space-y-6">
+        <header className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
           <div>
             <p className="rotulo">Financeiro</p>
-            <h1 className="mt-2 font-display text-4xl font-medium md:text-5xl">
+            <h1 className="mt-1.5 font-display text-3xl font-medium sm:text-4xl lg:text-5xl">
               Seus <span className="italic text-primary">resultados</span>
             </h1>
             <p className="mt-2 text-muted-foreground">
@@ -118,7 +118,7 @@ const Financeiro = () => {
           </Select>
         </header>
 
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           <Metrica icone={Wallet} rotulo="Receita realizada" valor={moeda(totais.receita)} />
           <Metrica icone={TrendingUp} rotulo="Previsto a receber" valor={moeda(totais.previsto)} />
           <Metrica icone={Percent} rotulo="Ticket médio" valor={moeda(totais.ticket)} />
@@ -130,7 +130,7 @@ const Financeiro = () => {
           />
         </section>
 
-        <Card className="border-border/60 bg-card/80 shadow-soft">
+        <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
           <CardHeader>
             <CardTitle className="font-display text-2xl font-medium">Receita por mês</CardTitle>
             <p className="text-sm text-muted-foreground">
@@ -184,7 +184,7 @@ const Financeiro = () => {
         </Card>
 
         <div className="grid gap-6 lg:grid-cols-2">
-          <Card className="border-border/60 bg-card/80 shadow-soft">
+          <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
             <CardHeader>
               <CardTitle className="font-display text-2xl font-medium">
                 Procedimentos que mais faturam
@@ -217,7 +217,7 @@ const Financeiro = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-border/60 bg-card/80 shadow-soft">
+          <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
             <CardHeader>
               <CardTitle className="font-display text-2xl font-medium">A receber</CardTitle>
               <p className="text-sm text-muted-foreground">Próximos atendimentos marcados</p>
@@ -273,13 +273,13 @@ function Metrica({
   apoio?: string;
 }) {
   return (
-    <Card className="border-border/60 bg-card/80 shadow-soft">
-      <CardContent className="p-5">
+    <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
+      <CardContent className="p-4 sm:p-5">
         <div className="flex items-center gap-2 text-muted-foreground">
           <Icone className="h-4 w-4" aria-hidden />
           <span className="text-sm">{rotulo}</span>
         </div>
-        <p className="mt-3 font-display text-3xl font-semibold tabular-nums">{valor}</p>
+        <p className="mt-2 font-display text-2xl font-semibold tabular-nums sm:mt-3 sm:text-3xl">{valor}</p>
         {apoio && <p className="mt-1 text-xs text-muted-foreground">{apoio}</p>}
       </CardContent>
     </Card>

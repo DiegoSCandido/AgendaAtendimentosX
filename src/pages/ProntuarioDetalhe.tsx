@@ -87,7 +87,7 @@ const ProntuarioDetalhe = () => {
 
   return (
     <AppLayout>
-      <div className="mx-auto max-w-6xl space-y-6">
+      <div className="mx-auto max-w-6xl space-y-5 md:space-y-6">
         <Button
           asChild
           variant="ghost"
@@ -99,7 +99,7 @@ const ProntuarioDetalhe = () => {
         </Button>
 
         <Card className="overflow-hidden border-border/60 bg-card/80 shadow-soft">
-          <div className="bg-gradient-hero p-6 md:p-9">
+          <div className="bg-gradient-hero p-5 sm:p-6 md:p-9">
             <div className="flex flex-col items-start gap-6 lg:flex-row lg:items-center">
               <Avatar className="h-20 w-20 shrink-0 border-4 border-background shadow-elegant">
                 <AvatarFallback className="bg-gradient-spa text-xl text-primary-foreground">
@@ -109,7 +109,7 @@ const ProntuarioDetalhe = () => {
 
               <div className="min-w-0 flex-1">
                 <p className="rotulo">Paciente desde {format(new Date(p.criadoEm), "MMM yyyy", { locale: ptBR })}</p>
-                <h1 className="mt-1 font-display text-3xl font-medium md:text-4xl">{p.nome}</h1>
+                <h1 className="mt-1 font-display text-2xl font-medium sm:text-3xl md:text-4xl">{p.nome}</h1>
                 <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1.5 text-sm text-muted-foreground">
                   {p.nascimento && (
                     <span className="flex items-center gap-1.5">
@@ -166,7 +166,7 @@ const ProntuarioDetalhe = () => {
             )}
           </div>
 
-          <div className="grid grid-cols-2 divide-x divide-border border-t border-border md:grid-cols-4">
+          <div className="grid grid-cols-2 divide-x divide-y divide-border border-t border-border md:grid-cols-4 md:divide-y-0">
             <Resumo rotulo="Sessões realizadas" valor={String(concluidos.length)} />
             <Resumo rotulo="Total investido" valor={moeda(investido)} />
             <Resumo
@@ -181,22 +181,22 @@ const ProntuarioDetalhe = () => {
         </Card>
 
         <Tabs defaultValue="anamnese" className="space-y-5">
-          <TabsList className="nao-imprimir h-11 rounded-full bg-muted/70 p-1">
-            <TabsTrigger value="anamnese" className="rounded-full px-5">
+          <TabsList className="nao-imprimir h-12 w-full justify-start overflow-x-auto rounded-full bg-muted/70 p-1">
+            <TabsTrigger value="anamnese" className="h-full shrink-0 rounded-full px-4 sm:px-5">
               Anamnese
             </TabsTrigger>
-            <TabsTrigger value="evolucao" className="rounded-full px-5">
+            <TabsTrigger value="evolucao" className="h-full shrink-0 rounded-full px-4 sm:px-5">
               Evolução ({minhasEvolucoes.length})
             </TabsTrigger>
-            <TabsTrigger value="agenda" className="rounded-full px-5">
+            <TabsTrigger value="agenda" className="h-full shrink-0 rounded-full px-4 sm:px-5">
               Agendamentos ({meus.length})
             </TabsTrigger>
           </TabsList>
 
           <TabsContent value="anamnese" className="space-y-5">
             <div className="grid gap-5 lg:grid-cols-3">
-              <Card className="border-border/60 bg-card/80 shadow-soft lg:col-span-2">
-                <CardContent className="space-y-5 p-6">
+              <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft lg:col-span-2">
+                <CardContent className="space-y-5 p-5 sm:p-6">
                   <Bloco titulo="Queixa principal" texto={a.queixaPrincipal} />
                   <Separator />
                   <Bloco titulo="Objetivo do tratamento" texto={a.objetivo} />
@@ -216,7 +216,7 @@ const ProntuarioDetalhe = () => {
               </Card>
 
               <div className="space-y-5">
-                <Card className="border-border/60 bg-card/80 shadow-soft">
+                <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
                   <CardContent className="space-y-4 p-6">
                     <Cabecalho icone={Sparkles} titulo="Perfil de pele" />
                     <Linha rotulo="Tipo" valor={a.tipoPele} />
@@ -230,7 +230,7 @@ const ProntuarioDetalhe = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="border-border/60 bg-card/80 shadow-soft">
+                <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
                   <CardContent className="space-y-4 p-6">
                     <Cabecalho icone={ClipboardList} titulo="Histórico de saúde" />
                     {condicoes.length === 0 ? (
@@ -291,7 +291,7 @@ const ProntuarioDetalhe = () => {
                   </CardContent>
                 </Card>
 
-                <Card className="border-border/60 bg-card/80 shadow-soft">
+                <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
                   <CardContent className="p-6">
                     <Cabecalho icone={Droplets} titulo="Hábitos de vida" />
                     <div className="mt-4 grid grid-cols-2 gap-4">
@@ -315,7 +315,7 @@ const ProntuarioDetalhe = () => {
           </TabsContent>
 
           <TabsContent value="evolucao">
-            <Card className="border-border/60 bg-card/80 shadow-soft">
+            <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
               <CardContent className="p-6 md:p-8">
                 <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
                   <h3 className="font-display text-2xl font-medium">Histórico de evolução</h3>
@@ -377,7 +377,7 @@ const ProntuarioDetalhe = () => {
           </TabsContent>
 
           <TabsContent value="agenda">
-            <Card className="border-border/60 bg-card/80 shadow-soft">
+            <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
               <CardContent className="p-6 md:p-8">
                 <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
                   <h3 className="font-display text-2xl font-medium">Agendamentos</h3>

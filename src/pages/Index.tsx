@@ -126,14 +126,14 @@ const Dashboard = () => {
 
   return (
     <AppLayout>
-      <div className="mx-auto max-w-7xl space-y-6">
-        <section className="relative overflow-hidden rounded-3xl bg-gradient-hero p-8 shadow-soft md:p-12">
-          <div className="relative z-10 flex flex-col gap-6 md:flex-row md:items-end md:justify-between">
+      <div className="mx-auto max-w-7xl space-y-5 md:space-y-6">
+        <section className="relative overflow-hidden rounded-3xl bg-gradient-hero p-6 shadow-soft sm:p-8 md:p-12">
+          <div className="relative z-10 flex flex-col gap-6 lg:flex-row lg:items-end lg:justify-between">
             <div className="space-y-3">
               <p className="rotulo">
                 {format(new Date(), "EEEE, d 'de' MMMM", { locale: ptBR })}
               </p>
-              <h1 className="font-display text-4xl font-medium leading-tight md:text-5xl">
+              <h1 className="font-display text-3xl font-medium leading-tight sm:text-4xl lg:text-5xl">
                 {saudacao}, <span className="italic text-primary">{primeiroNome}</span>
               </h1>
               <p className="max-w-md text-muted-foreground">
@@ -153,15 +153,15 @@ const Dashboard = () => {
           </div>
         </section>
 
-        <section className="grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+        <section className="grid grid-cols-2 gap-3 sm:gap-4 lg:grid-cols-4">
           {cartoes.map((c) => (
-            <Card key={c.rotulo} className="border-border/60 bg-card/80 shadow-soft">
-              <CardContent className="p-5">
+            <Card key={c.rotulo} className="min-w-0 border-border/60 bg-card/80 shadow-soft">
+              <CardContent className="p-4 sm:p-5">
                 <div className="flex items-center gap-2 text-muted-foreground">
                   <c.icon className="h-4 w-4" aria-hidden />
                   <span className="text-sm">{c.rotulo}</span>
                 </div>
-                <p className="mt-3 font-display text-3xl font-semibold tabular-nums">{c.valor}</p>
+                <p className="mt-2 font-display text-2xl font-semibold tabular-nums sm:mt-3 sm:text-3xl">{c.valor}</p>
                 <p className="mt-1 text-xs text-muted-foreground">{c.apoio}</p>
               </CardContent>
             </Card>
@@ -169,18 +169,19 @@ const Dashboard = () => {
         </section>
 
         <section className="grid gap-6 lg:grid-cols-3">
-          <Card className="border-border/60 bg-card/80 shadow-soft lg:col-span-2">
-            <CardHeader className="flex flex-row items-start justify-between space-y-0">
-              <div>
+          <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft lg:col-span-2">
+            <CardHeader className="flex flex-row items-start justify-between gap-2 space-y-0">
+              <div className="min-w-0">
                 <CardTitle className="font-display text-2xl font-medium">Agenda de hoje</CardTitle>
                 <p className="mt-1 text-sm text-muted-foreground">
                   {doDia.length} programados · {configuracoes.horaAbertura}h às{" "}
                   {configuracoes.horaFechamento}h
                 </p>
               </div>
-              <Button asChild variant="ghost" size="sm" className="rounded-full">
-                <Link to="/agenda">
-                  Ver agenda <ArrowUpRight className="ml-1 h-4 w-4" />
+              <Button asChild variant="ghost" size="sm" className="shrink-0 rounded-full">
+                <Link to="/agenda" aria-label="Ver agenda completa">
+                  <span className="hidden sm:inline">Ver agenda</span>
+                  <ArrowUpRight className="h-4 w-4 sm:ml-1" />
                 </Link>
               </Button>
             </CardHeader>
@@ -217,12 +218,13 @@ const Dashboard = () => {
                         </AvatarFallback>
                       </Avatar>
                       <div className="min-w-0 flex-1">
-                        <p className="truncate font-medium">{p?.nome}</p>
+                        <p className="font-medium leading-snug">{p?.nome}</p>
                         <p className="truncate text-sm text-muted-foreground">
                           {procedimento(a.procedimentoId)?.nome} • {a.duracao}min
                         </p>
+                        <StatusBadge status={a.status} className="mt-1.5 sm:hidden" />
                       </div>
-                      <StatusBadge status={a.status} />
+                      <StatusBadge status={a.status} className="hidden sm:inline-flex" />
                     </Link>
                   );
                 })
@@ -230,7 +232,7 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <Card className="border-border/60 bg-card/80 shadow-soft">
+          <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
             <CardHeader>
               <CardTitle className="font-display text-2xl font-medium">Últimas visitas</CardTitle>
               <p className="text-sm text-muted-foreground">Quem passou por aqui recentemente</p>
@@ -271,7 +273,7 @@ const Dashboard = () => {
           </Card>
         </section>
 
-        <Card className="border-border/60 bg-card/80 shadow-soft">
+        <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
           <CardHeader>
             <CardTitle className="font-display text-2xl font-medium">
               Atendimentos por dia

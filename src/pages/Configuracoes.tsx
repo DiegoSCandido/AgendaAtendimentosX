@@ -83,15 +83,15 @@ const Configuracoes = () => {
 
   return (
     <AppLayout>
-      <div className="mx-auto max-w-5xl space-y-6">
+      <div className="mx-auto max-w-5xl space-y-5 pb-24 md:space-y-6 md:pb-4">
         <header>
           <p className="rotulo">Configurações</p>
-          <h1 className="mt-2 font-display text-4xl font-medium md:text-5xl">
+          <h1 className="mt-1.5 font-display text-3xl font-medium sm:text-4xl lg:text-5xl">
             Sua <span className="italic text-primary">clínica</span>
           </h1>
         </header>
 
-        <Card className="border-border/60 bg-card/80 shadow-soft">
+        <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
           <CardHeader>
             <CardTitle className="font-display text-2xl font-medium">Dados da clínica</CardTitle>
           </CardHeader>
@@ -119,7 +119,7 @@ const Configuracoes = () => {
           </CardContent>
         </Card>
 
-        <Card className="border-border/60 bg-card/80 shadow-soft">
+        <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
           <CardHeader>
             <CardTitle className="font-display text-2xl font-medium">
               Horário de atendimento
@@ -191,8 +191,8 @@ const Configuracoes = () => {
           </CardContent>
         </Card>
 
-        <Card className="border-border/60 bg-card/80 shadow-soft">
-          <CardHeader className="flex flex-row items-center justify-between space-y-0">
+        <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
+          <CardHeader className="flex flex-col items-start gap-3 space-y-0 sm:flex-row sm:items-center sm:justify-between">
             <div>
               <CardTitle className="font-display text-2xl font-medium">
                 Tabela de procedimentos
@@ -201,7 +201,7 @@ const Configuracoes = () => {
                 Duração e valor alimentam a agenda e o financeiro.
               </p>
             </div>
-            <Button variant="outline" size="sm" className="rounded-full" onClick={adicionarProc}>
+            <Button variant="outline" size="sm" className="shrink-0 rounded-full" onClick={adicionarProc}>
               <Plus className="mr-1 h-4 w-4" /> Adicionar
             </Button>
           </CardHeader>
@@ -281,7 +281,7 @@ const Configuracoes = () => {
           </CardContent>
         </Card>
 
-        <Card className="border-border/60 bg-card/80 shadow-soft">
+        <Card className="min-w-0 border-border/60 bg-card/80 shadow-soft">
           <CardHeader>
             <CardTitle className="font-display text-2xl font-medium">Dados do protótipo</CardTitle>
           </CardHeader>
@@ -293,8 +293,11 @@ const Configuracoes = () => {
             <Separator />
             <AlertDialog>
               <AlertDialogTrigger asChild>
-                <Button variant="outline" className="rounded-full">
-                  <RotateCcw className="mr-1.5 h-4 w-4" /> Restaurar dados de demonstração
+                <Button
+                  variant="outline"
+                  className="h-auto w-full whitespace-normal rounded-2xl py-2.5 sm:w-auto sm:rounded-full"
+                >
+                  <RotateCcw className="mr-1.5 h-4 w-4 shrink-0" /> Restaurar dados de demonstração
                 </Button>
               </AlertDialogTrigger>
               <AlertDialogContent>
@@ -322,8 +325,12 @@ const Configuracoes = () => {
           </CardContent>
         </Card>
 
-        <div className="sticky bottom-4 flex justify-end">
-          <Button onClick={salvar} size="lg" className="rounded-full shadow-elegant">
+        <div className="fixed inset-x-0 bottom-0 z-20 border-t border-border bg-background/95 p-3 backdrop-blur md:sticky md:inset-x-auto md:bottom-4 md:flex md:justify-end md:border-0 md:bg-transparent md:p-0 md:backdrop-blur-none">
+          <Button
+            onClick={salvar}
+            size="lg"
+            className="w-full rounded-full shadow-elegant md:w-auto"
+          >
             Salvar configurações
           </Button>
         </div>

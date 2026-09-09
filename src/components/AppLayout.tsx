@@ -27,7 +27,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
   const { aberto, setAberto } = useBuscaGlobal();
   const [novoAgendamento, setNovoAgendamento] = useState(false);
   const { theme, setTheme } = useTheme();
-  const { agendamentos, paciente, procedimento } = useClinica();
+  const { agendamentos, configuracoes, paciente, procedimento } = useClinica();
 
   const pendentes = agendamentos
     .filter((a) => a.status === "agendado" && new Date(a.inicio) >= new Date())
@@ -45,11 +45,15 @@ export function AppLayout({ children }: { children: ReactNode }) {
 
         <div className="flex min-w-0 flex-1 flex-col">
           <header className="nao-imprimir sticky top-0 z-40 flex h-16 items-center gap-3 border-b border-border/60 bg-background/80 px-4 backdrop-blur-xl md:px-8">
-            <SidebarTrigger className="text-muted-foreground hover:text-foreground" />
+            <SidebarTrigger className="h-10 w-10 shrink-0 text-muted-foreground hover:text-foreground" />
+
+            <span className="truncate font-display text-base font-semibold lg:hidden">
+              {configuracoes.nomeClinica}
+            </span>
 
             <button
               onClick={() => setAberto(true)}
-              className="group hidden h-10 flex-1 items-center gap-3 rounded-full border border-border/60 bg-muted/40 px-4 text-left text-sm text-muted-foreground transition-smooth hover:bg-muted md:flex md:max-w-md"
+              className="group hidden h-10 flex-1 items-center gap-3 rounded-full border border-border/60 bg-muted/40 px-4 text-left text-sm text-muted-foreground transition-smooth hover:bg-muted lg:flex lg:max-w-md"
             >
               <Search className="h-4 w-4" aria-hidden />
               <span className="flex-1">Buscar paciente, agendamento...</span>
@@ -62,7 +66,7 @@ export function AppLayout({ children }: { children: ReactNode }) {
               <Button
                 variant="ghost"
                 size="icon"
-                className="rounded-full md:hidden"
+                className="rounded-full lg:hidden"
                 onClick={() => setAberto(true)}
                 aria-label="Buscar"
               >
